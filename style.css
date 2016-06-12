@@ -1,0 +1,125 @@
+html {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+body {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  font-family: 'Arial', sans-serif;
+  font-size: 13px;
+  color: #444;
+  line-height: 1.231;
+  background: white url('images/background-desktop.png') fixed no-repeat center top;
+}
+h1 {
+  text-align: center;
+  font-size: 40px;
+  margin-top: 20px;
+}
+section#main {
+  position: relative;
+  padding-top: 225px;
+  clear: both;
+  width: 100%;
+  max-width: 960px;
+  min-height: 400px;
+  margin: 0 auto;
+  text-align: left;
+  zoom: 1;
+  background: url('images/Satellite.gif') no-repeat scroll center top #FFFFFF;
+}
+div.content {
+  position: relative;
+  margin: 0 10px;
+  padding: 0 20px;
+  max-width: 570px;
+  margin-left: auto;
+  margin-right: auto;
+  float: none;
+}
+div.yellow {
+  margin: 0 0 48px 0;
+  padding: 20px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: #FCD701 url('images/background-stars-yellow.png') right bottom no-repeat;
+}
+div.yellow h2 {
+  font-family: 'NimbusSansNovusCond-Ultra', 'Impact', 'Arial', sans-serif;
+  font-size: 26px;
+  line-height: 1;
+  color: #000;
+  clear: both;
+  margin: 0 0 16px 0;
+}
+div.yellow h3 {
+  font-family: 'NimbusSansNovusCond-Bold', 'Arial', sans-serif;
+  font-weight: bold;
+  font-size: 18px;
+  margin: 0;
+  padding: 10px 0 0 0;
+  color: #000;
+  float: left;
+  width: 120px;
+}
+div.players .player {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+}
+div.results div.draw {
+  margin-bottom: 10px;
+  float: left;
+  clear: both;
+}
+div.players .player:after,
+div.results .draw:after {
+  display: table;
+  content: ' ';
+  clear: both;
+}
+ul.draw {
+  margin: 0 0 0 -4px;
+  padding: 0;
+  border: 0;
+  float: left;
+}
+ul.draw .ball {
+  display: inline-block;
+  width: 42px;
+  height: 42px;
+  line-height: 40px;
+  margin: 0 -1px;
+  text-align: center;
+  background: url('images/game-ball-yellow.png') center center no-repeat;
+  color: #000;
+  float: left;
+  font-family: 'Arial Narrow', 'Arial', sans-serif;
+  text-decoration: underline;
+  font-size: 16px;
+  font-weight: bold;
+}
+ul.draw .ball.drawn {
+  background: url('images/draw-balls.png') -68px center no-repeat;
+  width: 34px;
+  margin: 0 2px 0 4px;
+}
+div.results .more_results {
+  display: none;
+}
+a.toggle_results {
+  display: block;
+  background-color: orange;
+  padding: 10px;
+  color: #000;
+  text-decoration: none;
+  border-radius: 5px;
+  text-align: center;
+  clear: both;
+}
+a.toggle_results:hover {
+  background-color: yellow;
+}
