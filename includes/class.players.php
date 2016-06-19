@@ -11,6 +11,19 @@ class players {
     $this->errors[] = $error;
   }
 
+  public function loadPlayer($player_id) {
+    $player = array();
+
+    $db = MysqliDb::getInstance();
+    $db->where('player_id', $player_id);
+    $result = $db->get('players', 1);
+    if (!empty($result)) {
+      $player = reset($result);
+    }
+
+    return $player;
+  }
+
   public function getActivePlayers() {
     $players = array();
 
@@ -69,9 +82,10 @@ class players {
 
     foreach ($player_numbers as $player_id => $numbers) {
       $matching_numbers = array();
-      foreach ($numbers as $number) {
+      foreach ($numbers as $key => $number) {
         if (in_array($number['number'], $round_numbers)) {
           $matching_numbers[] = $number['number'];
+          $player_numbers[$player_id][$key]['drawn'] = TRUE;
         }
       }
 
@@ -80,6 +94,23 @@ class players {
         $this->markNumbers($player_id, $matching_numbers, $round_id);
       }
     }
+
+    foreach ($player_numbers as $player_id => $numbers) {
+      $all_numbers_drawn = TRUE;
+      foreach ($numbers as $key => $number) {
+        if (empty($number['drawn'])) {
+          $all_numbers_drawn = FALSE;
+          break;
+        }
+      }
+      if ($all_numbers_drawn) {
+        $player = $this->loadPlayer($player_id);
+        $lotto->setMessage($player['name'] . ' heeft deze ronde gewonnen! Gefeliciteerd!');
+        $lotto->endRound($round_id);
+      }
+    }
+
+    return TRUE;
   }
 
   private function markNumbers($player_id, $matching_numbers, $round_id = 0) {
@@ -124,5 +155,30 @@ class players {
     }
 
     return TRUE;
+  }
+
+  public function isLoggedIn() {
+    return isset($_SESSION[md5($_SERVER['SERVER_ADDR'] . $_SERVER['REMOTE_ADDR'])]);
+  }
+
+  public function login($username, $password) {
+    $db = MysqliDb::getInstance();
+    $db->where('username', $username);
+    $db->where('password', md5($password));
+    $result = $db->get('players', 1);
+
+    if (isset($result[0])) {
+      $_SESSION[md5($_SERVER['SERVER_ADDR'] . $_SERVER['REMOTE_ADDR'])] = array(
+        'id' => $result[0]['id'],
+        'name' => $result[0]['name'],
+      );
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
+  public function logout() {
+    unset($_SESSION[md5($_SERVER['SERVER_ADDR'] . $_SERVER['REMOTE_ADDR'])]);
   }
 }

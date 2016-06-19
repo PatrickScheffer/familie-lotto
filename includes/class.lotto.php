@@ -3,12 +3,22 @@
 class lotto {
   protected $errors = array();
 
+  protected $messages = array();
+
   public function getErrors() {
     return $this->errors;
   }
 
   private function setError($error) {
     $this->errors[] = $error;
+  }
+
+  public function getMessages() {
+    return $this->messages;
+  }
+
+  public function setMessage($message) {
+    $this->messages[] = $message;
   }
 
   public function getResultsByYear($year = 0) {
@@ -67,6 +77,19 @@ class lotto {
     return FALSE;
   }
 
+  public function getCurrentRound() {
+    $round_id = 0;
+
+    $db = MysqliDb::getInstance();
+    $db->where('end = 0');
+    $result = $db->get('rounds', 1);
+    if (!empty($result)) {
+      $round_id = $result[0]['round_id'];
+    }
+
+    return $round_id;
+  }
+
   public function getResultsByRound($round = 0) {
     $results = array();
 
@@ -111,8 +134,9 @@ class lotto {
             $this->setError('Failed inserting draw ' . $did . ' (error: ' . $db->getLastError() . ')');
           }
           else {
-            $this->updateRoundNumbers($round, $draw_data['numbers']);
-            players::increasePlayedDraws();
+            if ($this->updateRoundNumbers($round, $draw_data['numbers'])) {
+              players::increasePlayedDraws();
+            }
           }
         }
       }
@@ -161,10 +185,12 @@ class lotto {
   private function updateRoundNumbers($round_id, $numbers) {
     $db = MysqliDb::getInstance();
     $db->where('round_id', $round_id);
+    $db->where('end = 0');
     $round = $db->get('rounds', 1);
 
     if (empty($round)) {
       $this->setError('Round ' . $round_id . ' not found.');
+      return FALSE;
     }
     else {
       $round = $round[0];
@@ -180,15 +206,13 @@ class lotto {
         $update = $db->update('rounds', array(
           'drawn_numbers' => serialize($round_numbers),
         ));
-        if ($update) {
-          return TRUE;
-        }
-        else {
+        if (empty($update)) {
           $this->setError('Failed updating round ' . $round_id . ' (error: ' . $db->getLastError() . ')');
+          return FALSE;
         }
       }
     }
-    return FALSE;
+    return TRUE;
   }
 
   public function newRound() {

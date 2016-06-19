@@ -1,52 +1,17 @@
-<?php
-setlocale(LC_ALL, 'nl_NL.utf8');
-
-require_once ('MysqliDb.php');
-require_once('class.lotto.php');
-require_once('class.players.php');
-
-$round = 1;
-$db = new MysqliDb ('localhost', 'webdev', 'webdev', 'lotto');
-$lotto = new lotto();
-
-if (isset($_GET['sync'])) {
-  $lotto->sync(1);
-}
-
-$results = $lotto->getResultsByRound(1);
-
-$players = new players();
-$active_players = $players->getActivePlayers();
-$players->checkNumbers(1);
-
-$player_ids = array_keys($active_players);
-$player_numbers = $players->getNumbers(1, $player_ids);
-
-foreach ($active_players as $player_id => $player) {
-  if (!isset($player_numbers[$player_id])) {
-    unset($active_players[$player_id]);
-  }
-  else {
-    $active_players[$player_id]['numbers'] = $player_numbers[$player_id];
-  }
-}
-?>
-
-<!DOCTYPE>
-<html>
-<head>
-  <title>Familie Lotto</title>
-  <link rel="stylesheet" type="text/css" href="style.css" />
-  <script type="text/javascript" language="javascript" src="jquery-3.0.0.min.js"></script>
-  <script type="text/javascript" language="javascript" src="lotto.js"></script>
-</head>
-<body>
 
 <h1>Familie Lotto</h1>
+
+<h2>Ronde <?php print $current_round; ?></h2>
 
 <section id="main">
 
   <div class="content">
+
+    <?php if (!empty($messages)): ?>
+      <div class="yellow">
+        <?php print implode('<br>', $messages); ?>
+      </div>
+    <?php endif; ?>
 
     <div class="players yellow">
       <h2>Spelers</h2>
@@ -112,6 +77,3 @@ foreach ($active_players as $player_id => $player) {
 
   </div>
 </section>
-
-</body>
-</html>
