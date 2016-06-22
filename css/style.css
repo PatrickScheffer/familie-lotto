@@ -12,29 +12,34 @@ body {
   font-size: 13px;
   color: #444;
   line-height: 1.231;
-  background: white url('images/background-desktop.png') fixed no-repeat center top;
+  background: white url('../images/background-desktop.png') fixed no-repeat center top;
 }
 h1 {
   text-align: center;
   font-size: 40px;
-  margin: 20px 0 0 0;
+  margin: 0;
+  -webkit-text-shadow: 1px 1px 2px rgba(0, 0, 0, 1);
+  -moz-text-shadow: 1px 1px 2px rgba(0, 0, 0, 1);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 1);
+  color: #FCD701;
 }
 h2 {
   text-align: center;
   font-size: 30px;
-  margin: 10px 0 20px 0;
+  margin: 0 0 10px 0;
+  color: #000;
 }
 section#main {
   position: relative;
-  padding-top: 225px;
   clear: both;
   width: 100%;
+  padding-top: 10px;
   max-width: 960px;
   min-height: 400px;
   margin: 0 auto;
   text-align: left;
   zoom: 1;
-  background: url('images/Satellite.gif') no-repeat scroll center top #FFFFFF;
+  background: url('../images/Satellite.gif') no-repeat scroll center top #FFFFFF;
 }
 div.content {
   position: relative;
@@ -46,11 +51,11 @@ div.content {
   float: none;
 }
 div.yellow {
-  margin: 0 0 48px 0;
+  margin: 0 0 20px 0;
   padding: 20px;
   -webkit-border-radius: 10px;
   border-radius: 10px;
-  background: #FCD701 url('images/background-stars-yellow.png') right bottom no-repeat;
+  background: #FCD701 url('../images/background-stars-yellow.png') right bottom no-repeat;
 }
 div.yellow h2 {
   font-family: 'NimbusSansNovusCond-Ultra', 'Impact', 'Arial', sans-serif;
@@ -70,10 +75,23 @@ div.yellow h3 {
   float: left;
   width: 120px;
 }
+div.yellow.login {
+  margin-top: 100px;
+}
+form.login {
+  text-align: center;
+}
+form.login .form-item {
+  margin: 0 0 10px 0;
+}
+form.login .form-item label {
+  display: inline-block;
+  width: 110px;
+}
 div.players .player {
   position: relative;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 div.results div.draw {
   margin-bottom: 10px;
@@ -99,7 +117,7 @@ ul.draw .ball {
   line-height: 40px;
   margin: 0 -1px;
   text-align: center;
-  background: url('images/game-ball-yellow.png') center center no-repeat;
+  background: url('../images/game-ball-yellow.png') center center no-repeat;
   color: #000;
   float: left;
   font-family: 'Arial Narrow', 'Arial', sans-serif;
@@ -108,7 +126,7 @@ ul.draw .ball {
   font-weight: bold;
 }
 ul.draw .ball.drawn {
-  background: url('images/draw-balls.png') -68px center no-repeat;
+  background: url('../images/draw-balls.png') -68px center no-repeat;
   width: 34px;
   margin: 0 2px 0 4px;
 }

@@ -1,20 +1,13 @@
 <?php
-session_start();
-setlocale(LC_ALL, 'nl_NL.utf8');
-
-require_once ('includes/MysqliDb.php');
-require_once('includes/class.lotto.php');
-require_once('includes/class.players.php');
-
-$round = 1;
-$db = new MysqliDb ('localhost', 'webdev', 'webdev', 'lotto');
-$players = new players();
+require_once('bootstrap.php');
 
 if (isset($_GET['logout'])) {
   $players->logout();
 }
 elseif (isset($_POST['username']) && isset($_POST['password'])) {
-  $players->login(htmlspecialchars($_POST['username'], ENT_QUOTES), htmlspecialchars($_POST['password'], ENT_QUOTES));
+  $username = strtolower(htmlspecialchars($_POST['username'], ENT_QUOTES));
+  $password = strtolower(htmlspecialchars($_POST['password'], ENT_QUOTES));
+  $players->login($username, $password);
 }
 
 if ($players->isLoggedIn()) {

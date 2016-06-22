@@ -1,11 +1,9 @@
-
-<h1>Familie Lotto</h1>
-
-<h2>Ronde <?php print $current_round; ?></h2>
-
 <section id="main">
 
   <div class="content">
+
+    <h1>Familie Lotto</h1>
+    <h2>Ronde <?php print $current_round; ?></h2>
 
     <?php if (!empty($messages)): ?>
       <div class="yellow">
@@ -33,6 +31,26 @@
           <?php endforeach; ?>
         </div>
       <?php endif; ?>
+    </div>
+
+    <div class="players yellow">
+      <h2>Alle nummers van deze ronde</h2>
+      <div class="wrapper">
+        <div class="player">
+          <ul class="draw">
+            <?php
+            $round_numbers = $lotto->getRoundNumbers($current_round);
+            for ($i = 1; $i <= 45; $i++) {
+              print '<li class="ball';
+              if (in_array($i, $round_numbers)) {
+                print ' drawn';
+              }
+              print '">' . $i . '</li>';
+            }
+            ?>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <div class="results yellow">

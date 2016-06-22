@@ -161,16 +161,21 @@ class players {
     return isset($_SESSION[md5($_SERVER['SERVER_ADDR'] . $_SERVER['REMOTE_ADDR'])]);
   }
 
+  public function isAdmin() {
+    return !empty($_SESSION[md5($_SERVER['SERVER_ADDR'] . $_SERVER['REMOTE_ADDR'])]['role']);
+  }
+
   public function login($username, $password) {
     $db = MysqliDb::getInstance();
-    $db->where('username', $username);
-    $db->where('password', md5($password));
+    $db->where('name', $username);
+    $db->where('password', crypt($password, SECRET));
     $result = $db->get('players', 1);
 
     if (isset($result[0])) {
       $_SESSION[md5($_SERVER['SERVER_ADDR'] . $_SERVER['REMOTE_ADDR'])] = array(
-        'id' => $result[0]['id'],
+        'id' => $result[0]['player_id'],
         'name' => $result[0]['name'],
+        'role' => $result[0]['role'],
       );
       return TRUE;
     }
