@@ -3,6 +3,8 @@ require_once('bootstrap.php');
 
 if (isset($_GET['logout'])) {
   $players->logout();
+  header('Location: ' . BASE_URL . '/');
+  die();
 }
 elseif (isset($_POST['username']) && isset($_POST['password'])) {
   $username = strtolower(htmlspecialchars($_POST['username'], ENT_QUOTES));

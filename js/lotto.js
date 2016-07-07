@@ -9,5 +9,11 @@ $(document).ready(function() {
       $(this).find('.state_label').html('Toon alle');
     }
     e.preventDefault();
-  })
+  });
+
+  $('.delete').click(function(e) {
+    if (!confirm('Are you sure?')) {
+      e.preventDefault();
+    }
+  });
 });

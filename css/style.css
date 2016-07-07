@@ -41,6 +41,9 @@ section#main {
   zoom: 1;
   background: url('../images/Satellite.gif') no-repeat scroll center top #FFFFFF;
 }
+section#main-login {
+  background: none;
+}
 div.content {
   position: relative;
   margin: 0 10px;
@@ -76,7 +79,7 @@ div.yellow h3 {
   width: 120px;
 }
 div.yellow.login {
-  margin-top: 100px;
+  margin-top: 20px;
 }
 form.login {
   text-align: center;

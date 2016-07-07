@@ -1,4 +1,4 @@
-<section id="main">
+<section id="main-login">
   <div class="content">
     <div class="yellow login">
       <h2>Inloggen</h2>

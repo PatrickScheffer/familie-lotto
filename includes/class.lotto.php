@@ -114,54 +114,71 @@ class lotto {
   public function sync($round = 0) {
     $db = MysqliDb::getInstance();
 
-    $db->orderBy('date');
-    $last_did = $db->get('results', 1, array('draw_id'));
-    if (!empty($last_did[0]['draw_id'])) {
-      $last_did = $last_did[0]['draw_id'];
+    $db->where('round_id', $round);
+    $results = $db->get('rounds', 1);
 
-      $results = $this->getResultsByMonth();
-      foreach ($results as $did => $draw_data) {
-        if ($did > $last_did) {
-          $id = $db->insert('results', array(
-            'draw_id' => $did,
-            'date' => $draw_data['date'],
-            'super' => $draw_data['super'] ? 1 : 0,
-            'numbers' => serialize($draw_data['numbers']),
-            'round_id' => $round,
-          ));
+    if (empty($results)) {
+      return FALSE;
+    }
 
-          if (empty($id)) {
-            $this->setError('Failed inserting draw ' . $did . ' (error: ' . $db->getLastError() . ')');
-          }
-          else {
-            if ($this->updateRoundNumbers($round, $draw_data['numbers'])) {
-              players::increasePlayedDraws();
-            }
-          }
-        }
+    $round = $results[0];
+    $start_year = date('Y', $round['start']);
+    $start_month = date('m', $round['start']);
+
+    $results = array();
+    if (date('Y') == $start_year) {
+      for ($i = $start_month; $i <= date('m'); $i++) {
+        $results += $this->getResultsByMonth($start_year, $i);
       }
     }
     else {
-      $results = $this->getResultsByYear();
-      foreach ($results as $month => $dids) {
-        foreach ($dids as $did => $draw_data) {
-          $id = $db->insert('results', array(
-            'draw_id' => $did,
-            'date' => $draw_data['date'],
-            'super' => $draw_data['super'] ? 1 : 0,
-            'numbers' => serialize($draw_data['numbers']),
-            'round_id' => $round,
-          ));
-
-          if (empty($id)) {
-            $this->setError('Failed inserting draw ' . $did . ' (error: ' . $db->getLastError() . ')');
+      for ($i = $start_month; $i <= 12; $i++) {
+        $results += $this->getResultsByMonth($start_year, $i);
+      }
+      for ($i = $start_year; $i <= date('Y'); $i++) {
+        if ($i == date('Y')) {
+          for ($j = 1; $j <= date('m'); $j++) {
+            $results += $this->getResultsByMonth($i, $j);
           }
-          else {
-            $this->updateRoundNumbers($round, $draw_data['numbers']);
+        }
+        else {
+          for ($j = 1; $j <= 12; $j++) {
+            $results += $this->getResultsByMonth($i, $j);
           }
         }
       }
     }
+
+    $all_results = $db->get('results');
+    $results_by_id = array();
+    foreach ($all_results as $result) {
+      $results_by_id[$result['draw_id']] = $result;
+    }
+
+    foreach ($results as $did => $draw_data) {
+      if (isset($results_by_id[$did])) {
+        continue;
+      }
+
+      $id = $db->insert('results', array(
+        'draw_id' => $did,
+        'date' => $draw_data['date'],
+        'super' => $draw_data['super'] ? 1 : 0,
+        'numbers' => serialize($draw_data['numbers']),
+        'round_id' => $round['round_id'],
+      ));
+
+      if (empty($id)) {
+        $this->setError('Failed inserting draw ' . $did . ' (error: ' . $db->getLastError() . ')');
+      }
+      else {
+        if ($this->updateRoundNumbers($round['round_id'], $draw_data['numbers'])) {
+          players::increasePlayedDraws();
+        }
+      }
+    }
+
+    return TRUE;
   }
 
   public function getRoundNumbers($round_id = 0) {
