@@ -14,6 +14,8 @@ $db = MysqliDb::getInstance();
 if (isset($_GET['new_round'])) {
   $lotto->endRound();
   $lotto->newRound();
+  header('Location: ' . BASE_URL . '/admin.php');
+  die();
 }
 
 if (isset($_GET['delete'])) {
@@ -64,7 +66,7 @@ if (!empty($_POST['name'])) {
         if (!empty($_POST['max_draws'][$player_id])) {
           $new_bet_data['max_draws'] = htmlspecialchars($_POST['max_draws'][$player_id], ENT_QUOTES);
         }
-        if (!empty($_POST['played_draws'][$player_id])) {
+        if (isset($_POST['played_draws'][$player_id])) {
           $new_bet_data['played_draws'] = htmlspecialchars($_POST['played_draws'][$player_id], ENT_QUOTES);
         }
 
