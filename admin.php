@@ -31,7 +31,9 @@ if (isset($_GET['delete'])) {
 
 if (!empty($_POST['name'])) {
   foreach ($_POST['name'] as $player_id => $name) {
-    if (empty(trim($player_id)) || empty(trim($name))) {
+    $player_id = trim($player_id);
+    $name = trim($name);
+    if (empty($player_id) || empty($name)) {
       continue;
     }
 
