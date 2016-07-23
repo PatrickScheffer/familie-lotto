@@ -132,7 +132,7 @@ if (!empty($_POST['player_number'])) {
 <head>
   <title>Admin</title>
   <script type="text/javascript" language="javascript" src="js/jquery-3.0.0.min.js"></script>
-  <script language="JavaScript" type="text/javascript" src="js/lotto.js"></script>
+  <script language="JavaScript" type="text/javascript" src="js/l.js"></script>
 </head>
 <body>
 

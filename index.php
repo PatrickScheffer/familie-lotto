@@ -45,15 +45,15 @@ if ($players->isLoggedIn()) {
 <!DOCTYPE>
 <html>
 <head>
-  <title>Familie Lotto</title>
+  <title>Familie</title>
   <link rel="stylesheet" type="text/css" href="css/style.css" />
   <script type="text/javascript" language="javascript" src="js/jquery-3.0.0.min.js"></script>
-  <script type="text/javascript" language="javascript" src="js/lotto.js"></script>
+  <script type="text/javascript" language="javascript" src="js/l.js"></script>
 </head>
 <body>
 
 <?php if ($players->isLoggedIn()): ?>
-  <?php include_once('templates/lotto.php'); ?>
+  <?php include_once('templates/overview.php'); ?>
 <?php else: ?>
   <?php include_once('templates/login.php'); ?>
 <?php endif; ?>
