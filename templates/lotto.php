@@ -19,7 +19,7 @@
         <div class="wrapper">
           <?php foreach ($active_players as $player_id => $player): ?>
           <div class="player">
-            <h3><?php print $player['name']; ?></h3>
+            <h3 <?php if ($player['played_draws'] >= $player['max_draws']) print 'class="expired"'; ?> title="<?php print $player['played_draws']; ?> van <?php print $player['max_draws']; ?> trekkingen gespeeld"><?php print $player['name']; ?></h3>
             <ul class="draw">
               <?php foreach ($player['numbers'] as $numbers): ?>
                 <li class="ball <?php if ($numbers['drawn']) print 'drawn'; ?>">

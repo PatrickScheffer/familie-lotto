@@ -3,8 +3,6 @@
 class lotto {
   protected $errors = array();
 
-  protected $messages = array();
-
   public function getErrors() {
     return $this->errors;
   }
@@ -14,11 +12,16 @@ class lotto {
   }
 
   public function getMessages() {
-    return $this->messages;
+    $messages = array();
+    if (isset($_SESSION['messages'])) {
+      $messages = $_SESSION['messages'];
+      unset($_SESSION['messages']);
+    }
+    return $messages;
   }
 
-  public function setMessage($message) {
-    $this->messages[] = $message;
+  public function setMessage($id, $message) {
+    $_SESSION['messages'][$id] = $message;
   }
 
   public function getResultsByYear($year = 0) {
@@ -81,10 +84,17 @@ class lotto {
     $round_id = 0;
 
     $db = MysqliDb::getInstance();
-    $db->where('end = 0');
+    $db->where('end', 0);
     $result = $db->get('rounds', 1);
     if (!empty($result)) {
       $round_id = $result[0]['round_id'];
+    }
+    else {
+      $db->orderBy('end', 'DESC');
+      $result = $db->get('rounds', 1);
+      if (!empty($result)) {
+        $round_id = $result[0]['round_id'];
+      }
     }
 
     return $round_id;
@@ -246,7 +256,13 @@ class lotto {
 
   public function endRound($round_id = 0) {
     $db = MysqliDb::getInstance();
+
+    if (empty($round_id)) {
+      $round_id = $this->getCurrentRound();
+    }
+
     $db->where('round_id', $round_id);
+    $db->where('end', 0);
     $result = $db->update('rounds', array(
       'end' => time(),
     ));

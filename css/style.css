@@ -78,6 +78,9 @@ div.yellow h3 {
   float: left;
   width: 120px;
 }
+div.yellow h3.expired {
+  color: #ff0000;
+}
 div.yellow.login {
   margin-top: 20px;
 }
@@ -98,8 +101,8 @@ div.players .player {
 }
 div.results div.draw {
   margin-bottom: 10px;
-  float: left;
   clear: both;
+  width: 100%;
 }
 div.players .player:after,
 div.results .draw:after {

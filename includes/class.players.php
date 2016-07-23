@@ -105,7 +105,7 @@ class players {
       }
       if ($all_numbers_drawn) {
         $player = $this->loadPlayer($player_id);
-        $lotto->setMessage($player['name'] . ' heeft deze ronde gewonnen! Gefeliciteerd!');
+        $lotto->setMessage('end', $player['name'] . ' heeft deze ronde gewonnen! Gefeliciteerd!');
         $lotto->endRound($round_id);
       }
     }

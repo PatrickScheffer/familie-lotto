@@ -6,7 +6,15 @@ if (!$players->isAdmin()) {
   die();
 }
 
+$lotto = new lotto();
+$players = new players();
+
 $db = MysqliDb::getInstance();
+
+if (isset($_GET['new_round'])) {
+  $lotto->endRound();
+  $lotto->newRound();
+}
 
 if (isset($_GET['delete'])) {
   $db->where('player_id', htmlspecialchars($_GET['delete'], ENT_QUOTES));
@@ -73,9 +81,6 @@ if (!empty($_POST['name'])) {
     }
   }
 }
-
-$lotto = new lotto();
-$players = new players();
 
 $all_players = array();
 
@@ -178,7 +183,7 @@ if (!empty($_POST['player_number'])) {
 <p>
 <form method="post">
   <table>
-    <?php $player_numbers = $players->getNumbers(); ?>
+    <?php $player_numbers = $players->getNumbers($current_round); ?>
     <?php foreach ($all_players as $player_id => $player_info): ?>
       <tr>
         <td><?php print $player_id; ?></td>
