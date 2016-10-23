@@ -18,16 +18,24 @@
       <?php else: ?>
         <div class="wrapper">
           <?php foreach ($active_players as $player_id => $player): ?>
-          <div class="player">
-            <h3 <?php if ($player['played_draws'] >= $player['max_draws']) print 'class="expired"'; ?> title="<?php print $player['played_draws']; ?> van <?php print $player['max_draws']; ?> trekkingen gespeeld"><?php print $player['name']; ?></h3>
-            <ul class="draw">
-              <?php foreach ($player['numbers'] as $numbers): ?>
-                <li class="ball <?php if ($numbers['drawn']) print 'drawn'; ?>">
-                  <?php print $numbers['number']; ?>
-                </li>
-              <?php endforeach; ?>
-            </ul>
-          </div>
+            <?php
+            $won = TRUE;
+            foreach ($player['numbers'] as $numbers) {
+              if (!$numbers['drawn']) {
+                $won = FALSE;
+              }
+            }
+            ?>
+            <div class="player<?php if ($won) print ' won'; ?>">
+              <h3 <?php if ($player['played_draws'] >= $player['max_draws']) print 'class="expired"'; ?> title="<?php print $player['played_draws']; ?> van <?php print $player['max_draws']; ?> trekkingen gespeeld"><?php print $player['name']; ?></h3>
+              <ul class="draw">
+                <?php foreach ($player['numbers'] as $numbers): ?>
+                  <li class="ball<?php if ($numbers['drawn']) print ' drawn'; ?><?php if ($numbers['draw_id'] == $last_draw) print ' new'; ?>">
+                    <?php print $numbers['number']; ?>
+                  </li>
+                <?php endforeach; ?>
+              </ul>
+            </div>
           <?php endforeach; ?>
         </div>
       <?php endif; ?>
@@ -42,7 +50,7 @@
             $round_numbers = $lotto->getRoundNumbers($current_round);
             for ($i = 1; $i <= 45; $i++) {
               print '<li class="ball';
-              if (in_array($i, $round_numbers)) {
+              if (isset($round_numbers[$i])) {
                 print ' drawn';
               }
               print '">' . $i . '</li>';

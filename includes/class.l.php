@@ -182,7 +182,7 @@ class lotto {
         $this->setError('Failed inserting draw ' . $did . ' (error: ' . $db->getLastError() . ')');
       }
       else {
-        if ($this->updateRoundNumbers($round['round_id'], $draw_data['numbers'])) {
+        if ($this->updateRoundNumbers($round['round_id'], $did, $draw_data['numbers'])) {
           players::increasePlayedDraws();
         }
       }
@@ -209,7 +209,7 @@ class lotto {
     return $numbers;
   }
 
-  private function updateRoundNumbers($round_id, $numbers) {
+  private function updateRoundNumbers($round_id, $did, $numbers) {
     $db = MysqliDb::getInstance();
     $db->where('round_id', $round_id);
     $db->where('end = 0');
@@ -226,9 +226,15 @@ class lotto {
         $round_numbers = unserialize($round['drawn_numbers']);
       }
 
-      $diff = array_diff($numbers, $round_numbers);
-      if (!empty($diff)) {
-        $round_numbers = array_merge($round_numbers, $diff);
+      $new_round_numbers = FALSE;
+      foreach ($numbers as $number) {
+        if (!isset($round_numbers[$number])) {
+          $round_numbers[$number] = $did;
+          $new_round_numbers = TRUE;
+        }
+      }
+
+      if ($new_round_numbers) {
         $db->where('round_id', $round_id);
         $update = $db->update('rounds', array(
           'drawn_numbers' => serialize($round_numbers),
@@ -271,6 +277,17 @@ class lotto {
       return FALSE;
     }
     return TRUE;
+  }
+
+  public function getLastDraw() {
+    $db = MysqliDb::getInstance();
+    $db->orderBy('draw_id', 'DESC');
+    $result = $db->get('results', 1);
+    if (!empty($result)) {
+      return $result[0]['draw_id'];
+    }
+
+    return FALSE;
   }
 
 }

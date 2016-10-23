@@ -83,18 +83,19 @@ class players {
     foreach ($player_numbers as $player_id => $numbers) {
       $matching_numbers = array();
       foreach ($numbers as $key => $number) {
-        if (in_array($number['number'], $round_numbers)) {
-          $matching_numbers[] = $number['number'];
+        if (isset($round_numbers[$number['number']]) && !$player_numbers[$player_id][$key]['drawn']) {
+          $draw_id = $round_numbers[$number['number']];
+          $matching_numbers[$draw_id][] = $number['number'];
           $player_numbers[$player_id][$key]['drawn'] = TRUE;
         }
       }
 
       if (!empty($matching_numbers)) {
-        $matching_numbers = array_unique($matching_numbers);
         $this->markNumbers($player_id, $matching_numbers, $round_id);
       }
     }
 
+    $players_won = array();
     foreach ($player_numbers as $player_id => $numbers) {
       $all_numbers_drawn = TRUE;
       foreach ($numbers as $key => $number) {
@@ -105,9 +106,37 @@ class players {
       }
       if ($all_numbers_drawn) {
         $player = $this->loadPlayer($player_id);
-        $lotto->setMessage('end', $player['name'] . ' heeft deze ronde gewonnen! Gefeliciteerd!');
-        $lotto->endRound($round_id);
+        $players_won[] = $player['name'];
       }
+    }
+
+    if (!empty($players_won)) {
+      $message = '';
+      if (count($players_won) == 1) {
+        if (!strstr($players_won[0], ' en ')) {
+          $message = '<b>' . $players_won[0] . '</b> heeft deze ronde gewonnen! Gefeliciteerd!';
+        }
+        else {
+          $message = '<b>' . $players_won[0] . '</b> hebben deze ronde gewonnen! Gefeliciteerd!';
+        }
+      }
+      else {
+        sort($players_won);
+        for ($i = 0; $i < count($players_won); $i++) {
+          $message .= '<b>' . $players_won[$i] . '</b>';
+          if ($i < count($players_won) - 1) {
+            if ($i == count($players_won) - 2) {
+              $message .= ' en ';
+            }
+            else {
+              $message .= ', ';
+            }
+          }
+        }
+        $message .= ' hebben deze ronde gewonnen! Gefeliciteerd!';
+      }
+      $lotto->setMessage('end', $message);
+      $lotto->endRound($round_id);
     }
 
     return TRUE;
@@ -118,17 +147,20 @@ class players {
       return FALSE;
     }
 
-    $db = MysqliDb::getInstance();
-    $db->where('player_id', $player_id);
-    $db->where('number', $matching_numbers, 'IN');
-    $db->where('round_id', $round_id);
-    $result = $db->update('player_numbers', array(
-      'drawn' => 1,
-    ));
+    foreach ($matching_numbers as $draw_id => $numbers) {
+      $db = MysqliDb::getInstance();
+      $db->where('player_id', $player_id);
+      $db->where('number', $numbers, 'IN');
+      $db->where('round_id', $round_id);
+      $result = $db->update('player_numbers', array(
+        'drawn' => 1,
+        'draw_id' => $draw_id,
+      ));
 
-    if (empty($result)) {
-      $this->setError('Failed marking the numbers (' . implode(',', $matching_numbers) . ') of player ' . $player_id . ' (error: ' . $db->getLastError() . ')');
-      return FALSE;
+      if (empty($result)) {
+        $this->setError('Failed marking the numbers (' . implode(',', $numbers) . ') of player ' . $player_id . ' (error: ' . $db->getLastError() . ')');
+        return FALSE;
+      }
     }
 
     return TRUE;
