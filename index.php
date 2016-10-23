@@ -1,6 +1,32 @@
 <?php
 require_once('bootstrap.php');
 
+if (isset($_GET['token']) && $_GET['token'] == md5(CRON_TOKEN) && isset($_GET['sync'])) {
+  $lotto = new lotto();
+  $current_round = $lotto->getCurrentRound();
+  $lotto->sync($current_round);
+  $players->checkNumbers($current_round);
+  $results = $lotto->getResultsByRound($current_round);
+
+  $last_result = array_pop($results);
+  $numbers = unserialize($last_result['numbers']);
+
+  $to      = 'theguitarplayer@live.nl';
+  $subject = 'Familie lotto update';
+  $message = 'De lotto trekking van ' . date('d-m-Y') . ': ' . implode(', ', $numbers) . "\r\n";
+  $lotto_messages = $lotto->getMessages();
+  if (!empty($lotto_messages)) {
+    $message .= implode("\r\n", $lotto_messages);
+  }
+  $headers = 'From: mail@patrickscheffer.com' . "\r\n" .
+    'Reply-To: mail@patrickscheffer.com' . "\r\n" .
+    'X-Mailer: PHP/' . phpversion();
+
+  mail($to, $subject, $message, $headers);
+
+  print 'Cron successfully run.';
+}
+
 if (isset($_GET['logout'])) {
   $players->logout();
   header('Location: ' . BASE_URL . '/');
